@@ -7,6 +7,10 @@ import json
 import requests
 import alpha_vantage
 
+# ================ THE SECOND STAGE OF THE PROJECT ================
+# WITH THIS PROCEDURE, YOU MAY COLLECT THE MARKET HISTORY ABOUT
+# A PARTICULAR COMPANY AS A JSON-VALUE
+
 
 def createCompactMarketHistoryTable():
     try:
@@ -132,7 +136,9 @@ def iterate():
 
 
 if __name__ == "__main__":
+    # UNCOMMENT A FUNCTION YOU NEED TO EXECUTE.    
+    
     # createCompactMarketHistoryTable()
     # insertJSON_history()
-    iterate()
+    # iterate()
     # drop()
