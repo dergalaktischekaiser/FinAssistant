@@ -1,0 +1,10 @@
+2020-12-13 20:02:30.391 [main] INFO  %replace - Logging initialized @1280ms to org.eclipse.jetty.util.log.Slf4jLog
+2020-12-13 20:02:30.456 [main] INFO  %replace - Listen(80): /api/price
+2020-12-13 20:02:30.468 [main] INFO  %replace - jetty-9.4.30.v20200611; built: 2020-06-11T12:34:51.929Z; git: 271836e4c1f4612f12b7bb13ef5a92a927634b0d; jvm 11.0.4+10-LTS
+2020-12-13 20:02:30.496 [main] INFO  %replace - Started o.e.j.s.ServletContextHandler@2adddc06{/,null,AVAILABLE}
+2020-12-13 20:10:52.237 [main] INFO  %replace - Logging initialized @1936ms to org.eclipse.jetty.util.log.Slf4jLog
+2020-12-13 20:10:52.357 [main] INFO  %replace - Listen(8080): /api/price
+2020-12-13 20:10:52.377 [main] INFO  %replace - jetty-9.4.30.v20200611; built: 2020-06-11T12:34:51.929Z; git: 271836e4c1f4612f12b7bb13ef5a92a927634b0d; jvm 11.0.4+10-LTS
+2020-12-13 20:10:52.420 [main] INFO  %replace - Started o.e.j.s.ServletContextHandler@312afbc7{/,null,AVAILABLE}
+2020-12-13 20:10:52.435 [main] INFO  %replace - Started ServerConnector@24e8de5c{HTTP/1.1, (http/1.1)}{:::8080}
+2020-12-13 20:10:52.436 [main] INFO  %replace - Started @2139ms

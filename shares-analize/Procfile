@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -cp target/stocks-analize-1.0-jar-with-dependencies.jar Main

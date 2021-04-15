@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="layoutPattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %replace{%logger} - %msg%n</Property>
+        <Property name="resolvedLogDir">${sys:logDir:-.}</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${sys:layoutPattern}"/>
+        </Console>
+        <RollingFile
+                name="Daily"
+                fileName="${sys:resolvedLogDir}/logs/application.log"
+                filePattern="${sys:resolvedLogDir}/logs/application.%d{yyyy-MM-dd}.log.gz"
+                ignoreExceptions="false">
+            <PatternLayout pattern="${sys:layoutPattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10">
+                <Delete basePath="${sys:resolvedLogDir}/logs/" maxDepth="1">
+                    <IfFileName glob="*application.*log.gz">
+                        <IfAccumulatedFileSize exceeds="4 GB">
+                            <IfLastModified age="30d"/>
+                        </IfAccumulatedFileSize>
+                    </IfFileName>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Daily"/>
+        </Root>
+    </Loggers>
+</Configuration>
