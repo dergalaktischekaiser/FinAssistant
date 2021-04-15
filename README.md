@@ -1,2 +1,2 @@
 # FinAssistant
-Python scratch files for a FinAssistant project @ Deutsche Bank AG
+Python & Java scratch files for a FinAssistant project @ Deutsche Bank AG
