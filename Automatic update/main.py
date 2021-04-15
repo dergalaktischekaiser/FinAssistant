@@ -5,6 +5,10 @@ from datetime import datetime
 import time
 
 
+# TO LAUNCH EXTERNALLY
+# AUTOMATIC UPDATE OF ALL THE STOCK DATA
+
+
 def iterate():
     try:
         connection = pz.connect(user='yhxvtdvlnvmtxs',
@@ -122,4 +126,5 @@ def automatic_update():
 
 
 # def update(tckr):
-automatic_update()
+if __name__ == "__main__":
+    automatic_update()
