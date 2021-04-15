@@ -1,5 +1,9 @@
 # A script creating the general database hosting on my pgAdmin.
 
+
+# USE THIS SCRATCH CODE
+# TO LAUNCH THE DATABASE ON THE HEROKU SERVER
+
 import psycopg2 as pz
 
 connection = pz.connect(database="postgres",
