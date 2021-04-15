@@ -2,6 +2,8 @@ from finvizfinance.quote import finvizfinance
 from finviz.screener import Screener
 import psycopg2 as pz
 
+# A PROGRAMME TO OUTPUT THE POSTGRESQL TABLES TO ENSURE THAT EVERYTHING IS SAVED AS REQUIRED.
+
 
 def print_rows_of_stock_data():
     try:
