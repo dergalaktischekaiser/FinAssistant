@@ -1,6 +1,11 @@
 from finvizfinance.quote import finvizfinance
 from finviz.screener import Screener
 import psycopg2 as pz
+from datetime import datetime, timezone, timedelta
+import time
+import json
+import requests
+import alpha_vantage
 
 
 def if_row_exists(ticker):
@@ -15,6 +20,25 @@ def if_row_exists(ticker):
         stock = finvizfinance(ticker)
         stock_fundament = stock.TickerFundament()
         cursor.execute("SELECT Company FROM stock_data WHERE Company = %s", (stock_fundament['Company'],))
+        connection.commit()
+        return cursor.fetchone() is None
+
+    except(Exception, pz.Error) as error:
+        print("Connection failed:", error)
+
+
+def if_row_exists_in_MarketHistory(tckr, comp):
+    try:
+        connection = pz.connect(user='yhxvtdvlnvmtxs',
+                                password='bc4f2354ca29efd58e6dada90d8ca8c44203e69c0a41ef702b22e739dc7d8cda',
+                                host='ec2-54-216-155-253.eu-west-1.compute.amazonaws.com',
+                                port='5432',
+                                database='d5fre91hfg8vvf')
+        cursor = connection.cursor()
+        # A SELECT PostrgeSQL query which checks whether a row exists or not.
+        # stock = finvizfinance(tckr)
+        # stock_fundament = stock.TickerFundament()
+        cursor.execute("SELECT stock_name FROM MarketHistory WHERE stock_name = %s", (comp,))
         connection.commit()
         return cursor.fetchone() is None
 
@@ -145,6 +169,12 @@ def update_data(ticker):
                      dtoe, name_,)
         cursor.execute(update_query, to_update)
         connection.commit()
+        company = name_
+        check_history = if_row_exists_in_MarketHistory(ticker, company)
+        if not check_history:
+            update_hist(ticker, company)
+        else:
+            insert_hist(ticker, company)
 
     except(Exception, pz.Error) as err:
         print("Data update failed:", err)
@@ -153,6 +183,71 @@ def update_data(ticker):
         cursor.close()
         connection.close()
         print("Update finished. Connection to stock data closed.\n")
+
+
+def update_hist(tkr, comp):
+    try:
+        conn = pz.connect(user='yhxvtdvlnvmtxs',
+                                password='bc4f2354ca29efd58e6dada90d8ca8c44203e69c0a41ef702b22e739dc7d8cda',
+                                host='ec2-54-216-155-253.eu-west-1.compute.amazonaws.com',
+                                port='5432',
+                                database='d5fre91hfg8vvf')
+        cur = conn.cursor()
+        link = "https://www.alphavantage.co/query"
+        key = "79861QC266FXQM3C"
+        link_parameters = {
+            "function": "TIME_SERIES_INTRADAY",
+            "symbol": tkr,
+            "interval": "5min",
+            "outputsize": "full",
+            "apikey": key
+        }
+        response = requests.get(link, params=link_parameters)
+        dict_ = response.json()
+        json_object_for_ticker = json.dumps(dict_)
+        current_time = datetime.now()
+        bundle = (comp, comp, current_time, comp, json_object_for_ticker, comp,)
+        upd_query = """UPDATE MarketHistory set stock_name = %s where stock_name = %s;
+                       UPDATE MarketHistory set time = %s where stock_name = %s;
+                       UPDATE MarketHistory set history = %s where stock_name = %s;"""
+        cur.execute(upd_query, bundle)
+        conn.commit()
+        print("Attention! The company's market history has been updated!\n")
+
+    except(Exception, pz.Error) as exception_:
+        print("Something went wrong due to", exception_, '\n')
+
+
+def insert_hist(tkr, comp):
+    try:
+        conn = pz.connect(user='yhxvtdvlnvmtxs',
+                          password='bc4f2354ca29efd58e6dada90d8ca8c44203e69c0a41ef702b22e739dc7d8cda',
+                          host='ec2-54-216-155-253.eu-west-1.compute.amazonaws.com',
+                          port='5432',
+                          database='d5fre91hfg8vvf')
+        cur = conn.cursor()
+        link = "https://www.alphavantage.co/query"
+        key = "79861QC266FXQM3C"
+        link_parameters = {
+            "function": "TIME_SERIES_INTRADAY",
+            "symbol": tkr,
+            "interval": "5min",
+            "outputsize": "full",
+            "apikey": key
+        }
+        response = requests.get(link, params=link_parameters)
+        dict_ = response.json()
+        json_object_for_ticker = json.dumps(dict_)
+        insert_query = """INSERT INTO MarketHistory (stock_name, time, history)
+                          VALUES (%s, %s, %s)"""
+        current_time = datetime.now()
+        bundle = (comp, current_time, json_object_for_ticker)
+        cur.execute(insert_query, bundle)
+        conn.commit()
+        print("The company's market history has been added!\n")
+
+    except(Exception, pz.Error) as exception_:
+        print("Something went wrong due to", exception_, '\n')
 
 
 def get_data(ticker):
@@ -219,21 +314,23 @@ def get_data(ticker):
             print("PostgreSQL connection is closed.")
 
 
-print("Insert your query:", end=" ")
-ticker_ = input()
-print("...preparing to display...\n")
-try:
-    finvizfinance(ticker_)
-    print("Ticker found!\n")
+if __name__ == "__main__":
+    print("Insert your query:", end=" ")
+    ticker_ = input()
+    print("...preparing to display...\n")
+    try:
+        finvizfinance(ticker_)
+        print("Ticker found!\n")
 
-except:
-    print("Invalid ticker!\n")
-    exit()
+    except:
+        print("Invalid ticker!\n")
+        exit()
 
-check = if_row_exists(ticker_)
-if not check:
-    update_data(ticker_)
-else:
-    insert_data(ticker_)
-get_data(ticker_)
-print("\n")
+    check = if_row_exists(ticker_)
+    if not check:
+        update_data(ticker_)
+    else:
+        # insert_data(ticker_)
+        print("Ticker not found! Try another one.")
+    get_data(ticker_)
+    print("\n")
