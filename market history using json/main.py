@@ -64,6 +64,7 @@ def drop():
 
 
 def insertJSON_history():
+    # MAKE A TRY TO ADD AN "AMZN" TICKER TO ENSURE THAT QUERIES WORK PROPERLY.
     try:
         connection = pz.connect(user='yhxvtdvlnvmtxs',
                                 password='bc4f2354ca29efd58e6dada90d8ca8c44203e69c0a41ef702b22e739dc7d8cda',
